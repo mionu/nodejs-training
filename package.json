@@ -1,11 +1,11 @@
 {
-  "name": "hwk",
+  "name": "nodejs-training",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
+    "start": "node ./node_modules/nodemon/bin/nodemon.js start.js"
   },
   "author": "mionu",
   "license": "ISC",
