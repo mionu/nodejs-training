@@ -15,7 +15,6 @@ export default class Importer {
         return new Promise((resolve, reject) => {
             fs.readFile(filePath, (err, data) => {
                 if(err) {
-                    console.log(err);                
                     reject(err);
                 }
                 resolve(csvjson.toObject(data));
