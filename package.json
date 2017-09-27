@@ -1,11 +1,11 @@
 {
-  "name": "hwk",
+  "name": "nodejs-training",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node ./node_modules/nodemon/bin/nodemon.js start.js"
   },
   "author": "mionu",
   "license": "ISC",
@@ -13,6 +13,10 @@
     "babel": "^6.23.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
-    "babel-register": "^6.26.0"
+    "babel-register": "^6.26.0",
+    "nodemon": "^1.12.1"
+  },
+  "dependencies": {
+    "csvjson": "^4.3.4"
   }
 }
