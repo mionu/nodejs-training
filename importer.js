@@ -1,36 +1,31 @@
 import fs from 'fs';
 import path from 'path';
-import { DIRWATCHER_EVENT } from './constants';
+import csvjson from 'csvjson';
+import { DIRWATCHER_EVENT, DATA_PATH } from './constants';
 import emitter from './dir-emitter';
 
 
 export default class Importer {
-    constructor(dataPath) {
-        this.dataPath = dataPath;
-    }
-
     listen(event, handler) {
         emitter.on(event, handler);
     }
 
     import(filename) {
-        const filePath = path.join(this.dataPath, filename);
+        const filePath = path.join(DATA_PATH, { encoding : 'utf8'}, filename);
         return new Promise((resolve, reject) => {
             fs.readFile(filePath, (err, data) => {
                 if(err) {
                     console.log(err);                
                     reject(err);
                 }
-                console.log(data);
-                resolve(data);
+                resolve(csvjson.toObject(data));
             })
         })
     }
 
     importSync(filename) {
-        const filePath = path.join(this.dataPath, filename);
-        const data = fs.readFileSync(filePath);
-        console.log(data);
-        return data;
+        const filePath = path.join(DATA_PATH, filename);
+        const data = fs.readFileSync(filePath, { encoding : 'utf8'});
+        return csvjson.toObject(data);
     }
 }

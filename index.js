@@ -10,8 +10,8 @@ console.log(conf.name);
 new User();
 new Product();
 
-new DirWatcher().watch(DATA_PATH);
+new DirWatcher().watch(DATA_PATH, 1000);
 
-const importer = new Importer(DATA_PATH);
+const importer = new Importer();
 
-new importer.listen(DIRWATCHER_EVENT, importer.importSync.bind(importer));
+new importer.listen(DIRWATCHER_EVENT, importer.importSync);
