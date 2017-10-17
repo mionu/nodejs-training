@@ -6,7 +6,18 @@ const { join } = require('path');
 const https = require('https');
 
 function printHelpMessage() {
-  console.log('help message');
+  console.log(
+    'CLI params:\n' +
+    '--action, -a: action to perform\n' +
+    '--file, -f (required for several actions): path to file\n' +
+    '--path, -p (required for css-bundle): path to directory\n\n' +
+    'list of actions:\n' +
+    'io: pipes the given file to process.stdout\n' +
+    'transform: converts data from process.stdin to upper-case data on process.stdout\n' +
+    'transform-file: converts file from csv to json and output data to process.stdout\n' +
+    'transform-and-save: convert file from csv to json and output data to a result file with the same name but .json extension\n' +
+    'bundle-css: grabs all css files in given path, concats them into one, requests some extra css and saves it all in the same path as bundle.css'
+  );
 }
 
 // Implement a function inside streams.js that will use fs.createReadStream() to pipe the given file to process.stdout
@@ -51,6 +62,7 @@ function bundleCss(dir) {
       throw err;
     }
     files.map(file => join(dir, file))
+    .filter(file => /.css$/.test(file))
     .forEach(file => {
       fs.createReadStream(file).pipe(output);
     });
@@ -92,3 +104,5 @@ if (action) {
       printHelpMessage();
   }
 }
+
+module.exports = { inputOutput, transform, transformFile, bundleCss };
