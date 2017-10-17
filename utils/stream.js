@@ -1,7 +1,9 @@
 const parseArgs = require('minimist');
 const fs = require('fs');
 const through2 = require('through2');
-const csv2 = require('csv2');
+const csv2json = require('csv2json');
+const { join } = require('path');
+const https = require('https');
 
 function printHelpMessage() {
   console.log('help message');
@@ -30,7 +32,7 @@ function transform() {
 function transformFile(file, { saveToFile = false } = {}) {
   let output = saveToFile ? fs.createWriteStream(file.replace(/.csv$/, '.json')) : process.stdout;
   fs.createReadStream(file)
-  .pipe(csv2())
+  .pipe(csv2json())
   .pipe(through2({ objectMode: true }, function(chunk, enc, callback) {
     const processedChunk = chunk.toString();
     this.push(Buffer.from(processedChunk));
@@ -39,11 +41,30 @@ function transformFile(file, { saveToFile = false } = {}) {
   .pipe(output);
 }
 
+// Implement cssBundler function and introduce an extra parameter --path.
+function bundleCss(dir) {
+  const bundleFile = join(dir, 'bundle.css');
+  const url = 'https://www.epam.com/etc/clientlibs/foundation/main.min.fc69c13add6eae57cd247a91c7e26a15.css';
+  const output = fs.createWriteStream(bundleFile);
+  fs.readdir(dir, function(err, files) {
+    if (err) {
+      throw err;
+    }
+    files.map(file => join(dir, file))
+    .forEach(file => {
+      fs.createReadStream(file).pipe(output);
+    });
+    cssRequest = https.get(url, response => {
+      response.pipe(fs.createWriteStream(bundleFile, { flags: 'a' }));
+    });
+  });
+}
+
 const args = parseArgs(process.argv.slice(2), {
-  alias: { help: 'h', action: 'a', file: 'f' }
+  alias: { help: 'h', action: 'a', file: 'f', path: 'p' }
 });
 
-const { help, action, file } = args;
+const { help, action, file, path } = args;
 
 if (help) {
   printHelpMessage();
@@ -62,6 +83,9 @@ if (action) {
       break;
     case action === 'transform-and-save' && !!file:
       transformFile(file, { saveToFile: true });
+      break;
+    case action === 'bundle-css' && !!path:
+      bundleCss(path);
       break;
     default:
       console.log('wrong params');
