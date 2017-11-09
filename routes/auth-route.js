@@ -1,13 +1,45 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import { SECRET, email, username, password } from '../constants/auth-constants';
+import passport from 'passport';
+import { Strategy as LocalStrategy } from 'passport-local';
+import { Strategy as FacebookStrategy } from 'passport-facebook';
+import { SECRET, USER } from '../constants/auth-constants';
 
 const router = express.Router();
 
+passport.use(new LocalStrategy({
+  usernameField: 'username',
+  passwordField: 'password',
+  session: false
+}, (username, password, done) => {
+  if (username === USER.username && password === USER.password) {
+    done(null, USER);
+  }
+  else {
+    done(null, false, 'wrong username or password');
+  }
+}));
+
+passport.serializeUser(function(user, cb) {
+  cb(null, user);
+});
+
+passport.deserializeUser(function(obj, cb) {
+  cb(null, obj);
+});
+
+passport.use(new FacebookStrategy({
+  clientID: '511101469261065',
+  clientSecret: 'f6035ef6a60354eabb4076e941fd7281',
+  callbackURL: 'http://localhost:8080/api/auth/facebook/callback'
+}, (accessToken, refreshToken, profile, cb) => {
+  return cb(null, profile);
+}));
+
 router.post('/api/auth', (req, res) => {
   const user = req.body;
-  if (user.username === username && user.password === password) {
-    const payload = { email, username: user.username };
+  if (user.username === USER.username && user.password === USER.password) {
+    const payload = { email: USER.email, username: user.username };
     const token = jwt.sign(payload, SECRET, { expiresIn: '1h' });
     res.status(200).json({
       message: 'OK',
@@ -24,5 +56,16 @@ router.post('/api/auth', (req, res) => {
     });
   }
 });
+
+router.post('/api/auth/passport', passport.authenticate('local', { session: false }), (req, res) => {
+  res.json(USER);
+});
+
+router.get('/api/auth/facebook', passport.authenticate('facebook'));
+
+router.get('/api/auth/facebook/callback',
+  passport.authenticate('facebook', { failureRedirect: '/failed' }), (req, res) => {
+    res.json('success');
+  });
 
 export default router;

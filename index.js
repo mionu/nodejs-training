@@ -1,4 +1,5 @@
 import express from 'express';
+import passport from 'passport';
 import app from './app';
 import cookieParser from './middlewares/cookie-parser';
 import queryParser from './middlewares/query-parser';
@@ -13,6 +14,7 @@ app.listen(port, () => console.log(`App listening on port ${port}!`));
 app.use(express.json());
 app.use(cookieParser);
 app.use(queryParser);
+app.use(passport.initialize());
 app.use(authRoute);
 app.use(productRoute);
 app.use(usersRoute);
