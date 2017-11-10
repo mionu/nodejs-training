@@ -20,9 +20,12 @@
     "cookie": "^0.3.1",
     "csvjson": "^4.3.4",
     "express": "^4.16.2",
+    "express-session": "^1.15.6",
     "jsonwebtoken": "^8.1.0",
     "passport": "^0.4.0",
     "passport-facebook": "^2.1.1",
-    "passport-local": "^1.0.0"
+    "passport-google-oauth20": "^1.0.0",
+    "passport-local": "^1.0.0",
+    "passport-twitter": "^1.0.4"
   }
 }

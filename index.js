@@ -1,6 +1,7 @@
 import express from 'express';
 import passport from 'passport';
 import app from './app';
+import session from 'express-session';
 import cookieParser from './middlewares/cookie-parser';
 import queryParser from './middlewares/query-parser';
 import productRoute from './routes/product-route';
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use(cookieParser);
 app.use(queryParser);
 app.use(passport.initialize());
+app.use(session({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
 app.use(authRoute);
-app.use(productRoute);
-app.use(usersRoute);
+app.use('/api/products', productRoute);
+app.use('/api/users', usersRoute);
