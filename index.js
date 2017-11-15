@@ -17,6 +17,6 @@ app.use(cookieParser);
 app.use(queryParser);
 app.use(passport.initialize());
 app.use(session({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
-app.use(authRoute);
+app.use('/api/auth', authRoute);
 app.use('/api/products', productRoute);
 app.use('/api/users', usersRoute);

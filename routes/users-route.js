@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.use(checkToken);
 
-router.get('/api/users', (req, res) => {
+router.get('/', (req, res) => {
   fs.createReadStream(PATH_TO_USERS).pipe(res);
 });
 

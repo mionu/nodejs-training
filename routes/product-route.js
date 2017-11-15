@@ -8,23 +8,23 @@ const router = express.Router();
 
 router.use(checkToken);
 
-router.get('/api/products', (req, res) => {
+router.get('/', (req, res) => {
   fs.createReadStream(PATH_TO_PRODUCTS).pipe(res);
 });
 
-router.get('/api/products/:id', (req, res) => {
+router.get('/:id', (req, res) => {
   getProductById(req.params.id)
   .then(product => res.json(product))
   .catch(error => res.status(404).json(error));
 });
 
-router.get('/api/products/:id/reviews', (req, res) => {
+router.get('/:id/reviews', (req, res) => {
   getProductById(req.params.id)
   .then(product => res.json(product.reviews))
   .catch(error => res.status(404).json(error));
 });
 
-router.post('/api/products', (req, res) => {
+router.post('/', (req, res) => {
   const newProduct = req.body;
   getAllProducts().then(products => {
     const product = products.find(p => p.id === newProduct.id);

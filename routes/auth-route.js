@@ -54,8 +54,9 @@ passport.use(new GoogleStrategy({
   return cb(null, profile);
 }));
 
-router.post('/api/auth', (req, res) => {
+router.post('/', (req, res) => {
   const user = req.body;
+  console.log(user);
   if (user.username === USER.username && user.password === USER.password) {
     const payload = { email: USER.email, username: user.username };
     const token = jwt.sign(payload, SECRET, { expiresIn: '1h' });
@@ -75,27 +76,27 @@ router.post('/api/auth', (req, res) => {
   }
 });
 
-router.post('/api/auth/passport', passport.authenticate('local', { session: false }), (req, res) => {
+router.post('/passport', passport.authenticate('local', { session: false }), (req, res) => {
   res.json(USER);
 });
 
-router.get('/api/auth/facebook', passport.authenticate('facebook'));
+router.get('/facebook', passport.authenticate('facebook'));
 
-router.get('/api/auth/facebook/callback',
+router.get('/facebook/callback',
   passport.authenticate('facebook', { failureRedirect: '/failed' }), (req, res) => {
     res.json('success');
   });
 
-router.get('/api/auth/twitter', passport.authenticate('twitter'));
+router.get('/twitter', passport.authenticate('twitter'));
 
-router.get('/api/auth/twitter/callback',
+router.get('/twitter/callback',
 passport.authenticate('twitter', { failureRedirect: '/failed' }), (req, res) => {
   res.json('success');
 });
 
-router.get('/api/auth/google', passport.authenticate('google', { scope: ['profile'] }));
+router.get('/google', passport.authenticate('google', { scope: ['profile'] }));
 
-router.get('/api/auth/google/callback',
+router.get('/google/callback',
 passport.authenticate('google', { failureRedirect: '/failed' }), (req, res) => {
   res.json('success');
 });
