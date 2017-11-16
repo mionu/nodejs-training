@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./node_modules/nodemon/bin/nodemon.js app.js"
+    "start": "node_modules/.bin/nodemon app.js"
   },
   "author": "mionu",
   "license": "ISC",
@@ -26,6 +26,10 @@
     "passport-facebook": "^2.1.1",
     "passport-google-oauth20": "^1.0.0",
     "passport-local": "^1.0.0",
-    "passport-twitter": "^1.0.4"
+    "passport-twitter": "^1.0.4",
+    "pg": "^7.4.0",
+    "pg-hstore": "^2.3.2",
+    "sequelize": "^4.22.6",
+    "sequelize-cli": "^3.0.0"
   }
 }

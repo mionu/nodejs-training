@@ -1,42 +1,37 @@
 import express from 'express';
-import fs from 'fs';
 import { getProductById, getAllProducts } from '../helpers/product-helpers';
-import { PATH_TO_PRODUCTS } from '../constants/product-constants';
 import checkToken from '../middlewares/auth-middleware';
+import * as controller from '../controllers/product-controller';
 
 const router = express.Router();
 
 router.use(checkToken);
 
 router.get('/', (req, res) => {
-  fs.createReadStream(PATH_TO_PRODUCTS).pipe(res);
+  controller.findAll()
+  .then(products => res.json(products))
+  .catch(error => res.status(400).json(error));
 });
 
 router.get('/:id', (req, res) => {
-  getProductById(req.params.id)
+  const { id } = req.params;
+  controller.findById(id)
   .then(product => res.json(product))
-  .catch(error => res.status(404).json(error));
+  .catch(error => res.status(400).json(error));
 });
 
 router.get('/:id/reviews', (req, res) => {
-  getProductById(req.params.id)
+  const { id } = req.params;
+  controller.findById(id)
   .then(product => res.json(product.reviews))
-  .catch(error => res.status(404).json(error));
+  .catch(error => res.status(400).json(error));
 });
 
 router.post('/', (req, res) => {
   const newProduct = req.body;
-  getAllProducts().then(products => {
-    const product = products.find(p => p.id === newProduct.id);
-    if (product) {
-      res.json({ error: `product with id ${newProduct.id} already exists` });
-    } else {
-      products.push(newProduct);
-      fs.writeFile(PATH_TO_PRODUCTS, JSON.stringify(products));
-      res.json(newProduct);
-    }
-  })
+  controller.addProduct(newProduct)
+  .then(product => res.json(product))
   .catch(error => res.status(404).json(error));
-})
+});
 
 export default router;

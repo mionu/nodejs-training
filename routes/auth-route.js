@@ -5,7 +5,8 @@ import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
 import { Strategy as TwitterStrategy } from 'passport-twitter';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import { SECRET, USER } from '../constants/auth-constants';
+import { SECRET } from '../constants/auth-constants';
+import * as userController from '../controllers/user-controller';
 
 const router = express.Router();
 
@@ -14,12 +15,15 @@ passport.use(new LocalStrategy({
   passwordField: 'password',
   session: false
 }, (username, password, done) => {
-  if (username === USER.username && password === USER.password) {
-    done(null, USER);
-  }
-  else {
-    done(null, false, 'wrong username or password');
-  }
+  userController.findOne({ where: { username } })
+  .then(user => {
+    if (password === user.password) {
+      done(null, user);
+    } else {
+      return Promise.reject({ error: 'wrong password' });
+    }
+  })
+  .catch(error => done(null, false, error));
 }));
 
 passport.serializeUser(function(user, cb) {
@@ -55,29 +59,28 @@ passport.use(new GoogleStrategy({
 }));
 
 router.post('/', (req, res) => {
-  const user = req.body;
-  console.log(user);
-  if (user.username === USER.username && user.password === USER.password) {
-    const payload = { email: USER.email, username: user.username };
-    const token = jwt.sign(payload, SECRET, { expiresIn: '1h' });
-    res.status(200).json({
-      message: 'OK',
-      data: {
-        user: payload
-      },
-      token
-    });
-  }
-  else {
-    res.status(404).json({
-      'message': 'Not Found',
-      'data': req.body
-    });
-  }
+  const { username, password } = req.body;
+  userController.findOne({ where: { username } })
+  .then(user => {
+    if (password === user.password) {
+      const payload = user.get();
+      const token = jwt.sign(payload, SECRET, { expiresIn: '1h' });
+      res.status(200).json({
+        message: 'OK',
+        data: {
+          user: payload
+        },
+        token
+      });
+    } else {
+      return Promise.reject({ error: 'wrong password' })
+    }
+  })
+  .catch(error => res.status(400).json(error));
 });
 
 router.post('/passport', passport.authenticate('local', { session: false }), (req, res) => {
-  res.json(USER);
+  res.json('success');
 });
 
 router.get('/facebook', passport.authenticate('facebook'));
