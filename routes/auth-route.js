@@ -5,7 +5,7 @@ import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
 import { Strategy as TwitterStrategy } from 'passport-twitter';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import { SECRET, USER } from '../constants/auth-constants';
+import { SECRET } from '../constants/auth-constants';
 
 const router = express.Router();
 

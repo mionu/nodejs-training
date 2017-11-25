@@ -1,9 +1,8 @@
 const { MongoClient } = require('mongodb');
 const http = require('http');
+const { databaseUrl } = require('../config');
 
-const url = 'mongodb://localhost:27017/nodejs_training';
-
-MongoClient.connect(url, function(err, db) {
+MongoClient.connect(databaseUrl, function(err, db) {
   const city = db.collection('cities');
   http.createServer()
   .on('request', (req, res) => {

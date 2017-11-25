@@ -1,27 +1,37 @@
-import fs from 'fs';
-import { PATH_TO_PRODUCTS } from '../constants/product-constants';
+import { Product } from '../models';
+import { isEmpty } from 'lodash';
+import { Promise } from 'mongoose';
 
 function getProductById(id) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(PATH_TO_PRODUCTS, { encoding: 'utf8' }, (error, products) => {
-      if (error) {
-        reject(error);
-      }
-      const product = JSON.parse(products).find(p => p.id === id);
-      product ? resolve(product) : reject({ error: `product with id ${id} is not found` });
-    });
+  return Product.findById(id).then(product => {
+    return isEmpty(product) ? Promise.reject({ error: `product with id ${id} is not found` }) :
+      product;
   });
 }
 
 function getAllProducts() {
-  return new Promise((resolve, reject) => {
-    fs.readFile(PATH_TO_PRODUCTS, { encoding: 'utf8' }, (error, products) => {
-      if (error) {
-        reject(error);
-      }
-      resolve(JSON.parse(products));
-    });
-  })
+  return Product.find({});
+  // return new Promise((resolve, reject) => {
+  //   Product.find({}, (error, products) => {
+  //     if (error) {
+  //       reject({ error });
+  //     }
+  //     resolve(products);
+  //   });
+  // })
 }
 
-export { getProductById, getAllProducts };
+function addProduct(newProduct) {
+  return new Promise((resolve, reject) => {
+    // const productDoc = new Product(newProduct);
+    // productDoc.save((error, product) => {
+    //   console.log(`!!!!!!!!!!!!!!!!!!!!${error} ${product}`);
+    //   if (error) {
+    //     reject(error);
+    //   }
+    //   resolve(product);
+    // });
+  });
+}
+
+export { getProductById, getAllProducts, addProduct };

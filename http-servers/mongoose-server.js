@@ -1,20 +1,33 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const http = require('http');
-
-const url = 'mongodb://localhost:27017/nodejs_training';
+const { databaseUrl } = require('../config');
 
 const City = mongoose.model('City', new Schema({
-  name: String,
-  country: String,
+  name: {
+    type: String,
+    required: true
+  },
+  country: {
+    type: String,
+    required: true
+  },
   capital: Boolean,
   location: {
-    lat: Number,
-    long: Number
+    lat: {
+      type: Number,
+      min: [-90, 'can\'t be less than -90'],
+      max: [90, 'can\'t be more than 90']
+    },
+    long: {
+      type: Number,
+      min: [0, 'can\'t be less than 0'],
+      max: [180, 'can\'t be more than 180']
+    }
   }
 }));
 
-mongoose.connect(url);
+mongoose.connect(databaseUrl);
 
 http.createServer()
 .on('request', (req, res) => {
