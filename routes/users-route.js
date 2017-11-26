@@ -1,13 +1,15 @@
 import express from 'express';
-import fs from 'fs';
 import checkToken from '../middlewares/auth-middleware';
+import { getAllUsers } from '../controllers/user-controller';
 
 const router = express.Router();
 
-// router.use(checkToken);
+router.use(checkToken);
 
 router.get('/', (req, res) => {
-  fs.createReadStream(PATH_TO_USERS).pipe(res);
+  getAllUsers()
+    .then(users => res.json(users))
+    .catch(error => res.status(404).json(error));
 });
 
 export default router;

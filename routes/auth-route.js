@@ -1,11 +1,13 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
+import { isEmpty } from 'lodash';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
 import { Strategy as TwitterStrategy } from 'passport-twitter';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { SECRET } from '../constants/auth-constants';
+import { getSingleUser } from '../controllers/user-controller';
 
 const router = express.Router();
 
@@ -14,12 +16,15 @@ passport.use(new LocalStrategy({
   passwordField: 'password',
   session: false
 }, (username, password, done) => {
-  if (username === USER.username && password === USER.password) {
-    done(null, USER);
-  }
-  else {
-    done(null, false, 'wrong username or password');
-  }
+  getSingleUser({ username })
+    .then(user => {
+      if (!isEmpty(user) && password === user.get('password')) {
+        done(null, user);
+      } else {
+        done(null, false, 'wrong username or password');
+      }
+    })
+    .catch(error => done(null, false, 'wrong username or password'));
 }));
 
 passport.serializeUser(function(user, cb) {
@@ -55,29 +60,31 @@ passport.use(new GoogleStrategy({
 }));
 
 router.post('/', (req, res) => {
-  const user = req.body;
-  console.log(user);
-  if (user.username === USER.username && user.password === USER.password) {
-    const payload = { email: USER.email, username: user.username };
-    const token = jwt.sign(payload, SECRET, { expiresIn: '1h' });
-    res.status(200).json({
-      message: 'OK',
-      data: {
-        user: payload
-      },
-      token
+  const { username, password } = req.body;
+  getSingleUser({ username })
+    .then(user => {
+      if (!isEmpty(user) && password === user.get('password')) {
+        const token = jwt.sign(user.toObject(), SECRET, { expiresIn: '1h' });
+        res.status(200).json({
+          message: 'OK',
+          data: { user },
+          token
+        });
+      } else {
+        res.status(404).json({
+          'message': 'Not Found',
+          'data': req.body
+        });
+      }
+    })
+    .catch(error => {
+      console.log(error);
+      res.status(404).json(error);
     });
-  }
-  else {
-    res.status(404).json({
-      'message': 'Not Found',
-      'data': req.body
-    });
-  }
 });
 
 router.post('/passport', passport.authenticate('local', { session: false }), (req, res) => {
-  res.json(USER);
+  res.json('success');
 });
 
 router.get('/facebook', passport.authenticate('facebook'));
@@ -90,14 +97,14 @@ router.get('/facebook/callback',
 router.get('/twitter', passport.authenticate('twitter'));
 
 router.get('/twitter/callback',
-passport.authenticate('twitter', { failureRedirect: '/failed' }), (req, res) => {
+  passport.authenticate('twitter', { failureRedirect: '/failed' }), (req, res) => {
   res.json('success');
 });
 
 router.get('/google', passport.authenticate('google', { scope: ['profile'] }));
 
 router.get('/google/callback',
-passport.authenticate('google', { failureRedirect: '/failed' }), (req, res) => {
+  passport.authenticate('google', { failureRedirect: '/failed' }), (req, res) => {
   res.json('success');
 });
 
