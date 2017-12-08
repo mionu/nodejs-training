@@ -2,7 +2,8 @@ import express from 'express';
 import {
   getAllCities,
   addCity,
-  removeCityById
+  removeCityById,
+  upsertCityById
 } from '../controllers/city-controller';
 
 const router = express.Router();
@@ -24,6 +25,14 @@ router.delete('/:id', (req, res) => {
   const { id } = req.params;
   removeCityById(id)
     .then(() => res.json({ message: `city with id ${id} is deleted` }))
+    .catch(error => res.status(500).json(error));
+});
+
+router.put('/:id', (req, res) => {
+  const { id } = req.params;
+  const fieldsToUpsert = req.body;
+  upsertCityById(id, fieldsToUpsert)
+    .then(() => res.json({ message: `city with id ${id} is updated` }))
     .catch(error => res.status(500).json(error));
 });
 

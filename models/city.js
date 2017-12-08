@@ -30,4 +30,9 @@ schema.pre('save', function(next) {
   next();
 });
 
+schema.pre('findOneAndUpdate', function(next) {
+  this.update({},{ $set: { lastModifiedDate: Date.now() } });
+  next();
+});
+
 export default mongoose.model('City', schema);

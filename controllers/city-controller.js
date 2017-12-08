@@ -13,8 +13,13 @@ function removeCityById(id) {
   return City.findByIdAndRemove(id);
 }
 
+function upsertCityById(id, fieldsToUpsert) {
+  return City.findByIdAndUpdate(id, { $set: fieldsToUpsert }, { upsert: true });
+}
+
 export {
   getAllCities,
   addCity,
-  removeCityById
+  removeCityById,
+  upsertCityById
 };
