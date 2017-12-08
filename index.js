@@ -8,6 +8,7 @@ import queryParser from './middlewares/query-parser';
 import productRoute from './routes/product-route';
 import usersRoute from './routes/users-route';
 import authRoute from './routes/auth-route';
+import cityRoute from './routes/city-route';
 import { databaseUrl } from './config';
 
 const port = process.env.PORT || 8080;
@@ -24,3 +25,4 @@ app.use(session({ secret: 'keyboard cat', resave: true, saveUninitialized: true 
 app.use('/api/auth', authRoute);
 app.use('/api/products', productRoute);
 app.use('/api/users', usersRoute);
+app.use('/api/cities', cityRoute);

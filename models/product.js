@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 
-export default mongoose.model('Product', new Schema({
+const schema = new Schema({
   name: {
     type: String,
     required: true
@@ -15,5 +15,13 @@ export default mongoose.model('Product', new Schema({
   isbn: {
     type: String,
     required: true
-  }
-}));
+  },
+  lastModifiedDate: Date
+});
+
+schema.pre('save', function(next) {
+  this.lastModifiedDate = Date.now();
+  next();
+});
+
+export default mongoose.model('Product', schema);

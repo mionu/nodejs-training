@@ -8,4 +8,12 @@ function getSingleUser(criteria) {
   return User.findOne(criteria);
 }
 
-export { getAllUsers, getSingleUser };
+function removeUserById(id) {
+  return User.findByIdAndRemove(id);
+}
+
+export {
+  getAllUsers,
+  getSingleUser,
+  removeUserById
+};

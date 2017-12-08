@@ -17,4 +17,13 @@ function addProduct(newProduct) {
   return productDoc.save();
 }
 
-export { getProductById, getAllProducts, addProduct };
+function removeProductById(id) {
+  return Product.findByIdAndRemove(id);
+}
+
+export {
+  getProductById,
+  getAllProducts,
+  addProduct,
+  removeProductById
+};

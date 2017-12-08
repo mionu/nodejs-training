@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 
-export default mongoose.model('User', new Schema({
+const schema = new Schema({
   firstName: String,
   lastName: String,
   username: {
@@ -11,5 +11,13 @@ export default mongoose.model('User', new Schema({
   password: {
     type: String,
     required: true
-  }
-}));
+  },
+  lastModifiedDate: Date
+});
+
+schema.pre('save', function(next) {
+  this.lastModifiedDate = Date.now();
+  next();
+});
+
+export default mongoose.model('User', schema);

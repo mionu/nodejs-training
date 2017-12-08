@@ -1,4 +1,9 @@
 import User from './user';
 import Product from './product';
+import City from './city';
 
-export { User, Product };
+export {
+  User,
+  Product,
+  City
+};
