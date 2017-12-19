@@ -1,0 +1,349 @@
+#link to swaggerhub: https://swaggerhub.com/apis/mionu/nodejs-training/1.0.0
+swagger: '2.0'
+info:
+  description: Homework 8
+  version: 1.0.0
+  title: Nodejs Training
+host: localhost:8080
+basePath: /api
+tags:
+- name: product
+  description: Operations about products
+- name: city
+  description: Operations about cities
+- name: user
+  description: Operations about users
+schemes:
+  - http
+paths:
+  /users:
+    get:
+      tags:
+      - user
+      summary: Return all users
+      operationId: getAllUsers
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+        500:
+          description: Server error
+  /users/{id}:
+    delete:
+      tags:
+      - user
+      summary: Delete single user
+      operationId: deleteUserById
+      parameters:
+      - name: id
+        in: path
+        description: ID of user to delete
+        required: true
+        type: string
+      responses:
+        200:
+          description: Successful operation
+        404:
+          description: User is not found
+        500:
+          description: Server error
+  /products:
+    get:
+      tags:
+      - product
+      summary: Return all products
+      operationId: getAllProducts
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Product'
+        500:
+          description: Server error
+    post:
+      tags:
+      - product
+      summary: Add new product and return it
+      operationId: addNewProduct
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: Product object that needs to be added to the store
+        required: true
+        schema:
+          $ref: '#/definitions/Product'
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/Product'
+        400:
+          description: Invalid product
+        500:
+          description: Server error
+  /products/{id}:
+    get:
+      tags:
+      - product
+      summary: Return single product
+      operationId: getProductById
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        description: ID of product
+        required: true
+        type: string
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/Product'
+        404:
+          description: Product is not found
+        500:
+          description: Server error
+    delete:
+      tags:
+      - product
+      summary: Delete single product
+      operationId: deleteProductById
+      parameters:
+      - name: id
+        in: path
+        description: ID of product to delete
+        required: true
+        type: string
+      responses:
+        200:
+          description: Successful operation
+        404:
+          description: Product is not found
+        500:
+          description: Server error
+  /products/{id}/reviews:
+    get:
+      tags:
+      - product
+      summary: Return all reviews for a single product
+      operationId: getProductsReviewsById
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        description: ID of product
+        required: true
+        type: string
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                commentator:
+                  type: string
+                  description: username of the commentator
+                message:
+                  type: string
+        404:
+          description: Product is not found
+        500:
+          description: Server error
+  /cities:
+    get:
+      tags:
+      - city
+      summary: Return all cities
+      operationId: getAllCities
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/City'
+        500:
+          description: Server error
+    post:
+      tags:
+      - city
+      summary: Adds new city and returns it
+      operationId: addNewCity
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: City object that needs to be added to the store
+        required: true
+        schema:
+          $ref: '#/definitions/City'
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/City'
+        400:
+          description: Invalid city object
+        500:
+          description: Server error
+  /cities/{id}:
+    put:
+      tags:
+      - city
+      summary: Updates single city by id if exists or adds new city with given id otherwise
+      operationId: updateOrAddCity
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: City object that needs to be updated or added to the store
+        required: true
+        schema:
+          $ref: '#/definitions/City'
+      - in: path
+        name: id
+        description: Id of the city to update/create
+        required: true
+        type: string
+      responses:
+        200:
+          description: Successful operation
+        400:
+          description: Invalid city object
+        500:
+          description: Server error
+    delete:
+      tags:
+      - city
+      summary: Deletes single city
+      operationId: deleteCityById
+      parameters:
+      - name: id
+        in: path
+        description: ID of city to delete
+        required: true
+        type: string
+      responses:
+        200:
+          description: Successful operation
+        404:
+          description: Product is not found
+        500:
+          description: Server error
+definitions:
+  Product:
+    type: object
+    required:
+    - name
+    - price
+    - isbn
+    properties:
+      name:
+        type: string
+        description: product's name
+        example: lip gloss
+      price:
+        type: number
+        format: double
+        minimum: 0
+        description: product's price
+        example: 30.90
+      brand:
+        type: string
+        description: product's brand
+        example: Shiseido
+      company:
+        type: string
+        description: product's manufacturing company
+        example: Shiseido Company Limited
+      isbn:
+        type: string
+        description: product's ISBN code
+        example: 158995707-5
+  User:
+    type: object
+    required:
+    - username
+    - password
+    properties:
+      username:
+        type: string
+        description: user's username
+        example: johndoe
+      firstName:
+        type: string
+        description: user's first name
+        example: John
+      lastName:
+        type: string
+        description: user's last name
+        example: Doe
+      password:
+        type: string
+        format: password
+        description: user account's password
+        example: qwerty123
+  City:
+    type: object
+    required:
+    - name
+    - country
+    properties:
+      name:
+        type: string
+        description: city's name
+        example: New York
+      country:
+        type: string
+        description: country where the city is located
+        example: USA
+      capital:
+        type: boolean
+        default: false
+        description: flag showing if the city is its coutry's capital
+      location:
+        type: object
+        required:
+        - lat
+        - long
+        description: city's location (coordinates)
+        properties:
+          lat:
+            type: number
+            format: double
+            minimum: -90
+            maximum: 90
+            description: city's latitude
+            example: 40.7207
+          long:
+            type: number
+            format: double
+            minimum: 0
+            maximum: 180
+            description: city's longitude
+            example: -73.9394
