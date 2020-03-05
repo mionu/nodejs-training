@@ -1,15 +1,15 @@
-import conf from './config';
-import { User, Product } from './models';
-import Importer from './importer';
-import DirWatcher from './dirwatcher';
-import { DIRWATCHER_EVENT, DATA_PATH } from './constants';
+import express from 'express';
+import app from './app';
+import cookieParser from './middlewares/cookie-parser';
+import queryParser from './middlewares/query-parser';
+import productRoute from './routes/product-route';
+import usersRoute from './routes/users-route';
+const port = process.env.PORT || 8080;
 
-console.log(conf.name);
-new User();
-new Product();
+app.listen(port, () => console.log(`App listening on port ${port}!`));
 
-new DirWatcher().watch(DATA_PATH, 1000);
-
-const importer = new Importer();
-
-importer.listen(DIRWATCHER_EVENT, importer.importSync);
+app.use(express.json());
+app.use(cookieParser);
+app.use(queryParser);
+app.use(productRoute);
+app.use(usersRoute);
