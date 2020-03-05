@@ -2,26 +2,29 @@ import express from 'express';
 import fs from 'fs';
 import { getProductById, getAllProducts } from '../helpers/product-helpers';
 import { PATH_TO_PRODUCTS } from '../constants/product-constants';
+import checkToken from '../middlewares/auth-middleware';
 
 const router = express.Router();
 
-router.get('/api/products', (req, res) => {
+router.use(checkToken);
+
+router.get('/', (req, res) => {
   fs.createReadStream(PATH_TO_PRODUCTS).pipe(res);
 });
 
-router.get('/api/products/:id', (req, res) => {
+router.get('/:id', (req, res) => {
   getProductById(req.params.id)
   .then(product => res.json(product))
-  .catch(err => res.status(404).json(err));
+  .catch(error => res.status(404).json(error));
 });
 
-router.get('/api/products/:id/reviews', (req, res) => {
+router.get('/:id/reviews', (req, res) => {
   getProductById(req.params.id)
   .then(product => res.json(product.reviews))
-  .catch(err => res.status(404).json(err));
+  .catch(error => res.status(404).json(error));
 });
 
-router.post('/api/products', (req, res) => {
+router.post('/', (req, res) => {
   const newProduct = req.body;
   getAllProducts().then(products => {
     const product = products.find(p => p.id === newProduct.id);
@@ -33,7 +36,7 @@ router.post('/api/products', (req, res) => {
       res.json(newProduct);
     }
   })
-  .catch(err => res.status(404).json(err));
+  .catch(error => res.status(404).json(error));
 })
 
 export default router;

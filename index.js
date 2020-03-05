@@ -1,9 +1,13 @@
 import express from 'express';
+import passport from 'passport';
+import session from 'express-session';
 import app from './app';
 import cookieParser from './middlewares/cookie-parser';
 import queryParser from './middlewares/query-parser';
 import productRoute from './routes/product-route';
 import usersRoute from './routes/users-route';
+import authRoute from './routes/auth-route';
+
 const port = process.env.PORT || 8080;
 
 app.listen(port, () => console.log(`App listening on port ${port}!`));
@@ -11,5 +15,8 @@ app.listen(port, () => console.log(`App listening on port ${port}!`));
 app.use(express.json());
 app.use(cookieParser);
 app.use(queryParser);
-app.use(productRoute);
-app.use(usersRoute);
+app.use(passport.initialize());
+app.use(session({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
+app.use('/api/auth', authRoute);
+app.use('/api/products', productRoute);
+app.use('/api/users', usersRoute);

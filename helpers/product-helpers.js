@@ -15,9 +15,9 @@ function getProductById(id) {
 
 function getAllProducts() {
   return new Promise((resolve, reject) => {
-    fs.readFile(PATH_TO_PRODUCTS, { encoding: 'utf8' }, (err, products) => {
-      if (err) {
-        reject(err);
+    fs.readFile(PATH_TO_PRODUCTS, { encoding: 'utf8' }, (error, products) => {
+      if (error) {
+        reject(error);
       }
       resolve(JSON.parse(products));
     });
